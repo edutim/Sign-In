@@ -12,6 +12,7 @@ struct Sign_InApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(DataService.shared)
         }
     }
 }

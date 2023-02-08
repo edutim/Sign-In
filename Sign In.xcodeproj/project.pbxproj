@@ -11,6 +11,10 @@
 		4AB200562992D37B0064169A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB200552992D37B0064169A /* ContentView.swift */; };
 		4AB200582992D37D0064169A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AB200572992D37D0064169A /* Assets.xcassets */; };
 		4AB2005B2992D37D0064169A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AB2005A2992D37D0064169A /* Preview Assets.xcassets */; };
+		4AB200642992D5890064169A /* Vapor in Frameworks */ = {isa = PBXBuildFile; productRef = 4AB200632992D5890064169A /* Vapor */; };
+		4AB200662992D5B80064169A /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB200652992D5B80064169A /* Server.swift */; };
+		4AB200682992D76F0064169A /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB200672992D76F0064169A /* Person.swift */; };
+		4AB2006A2992D7EE0064169A /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB200692992D7EE0064169A /* DataService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +24,9 @@
 		4AB200572992D37D0064169A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4AB2005A2992D37D0064169A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4AB2005C2992D37D0064169A /* Sign_In.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Sign_In.entitlements; sourceTree = "<group>"; };
+		4AB200652992D5B80064169A /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
+		4AB200672992D76F0064169A /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
+		4AB200692992D7EE0064169A /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AB200642992D5890064169A /* Vapor in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,6 +62,9 @@
 			children = (
 				4AB200532992D37B0064169A /* Sign_InApp.swift */,
 				4AB200552992D37B0064169A /* ContentView.swift */,
+				4AB200652992D5B80064169A /* Server.swift */,
+				4AB200672992D76F0064169A /* Person.swift */,
+				4AB200692992D7EE0064169A /* DataService.swift */,
 				4AB200572992D37D0064169A /* Assets.xcassets */,
 				4AB2005C2992D37D0064169A /* Sign_In.entitlements */,
 				4AB200592992D37D0064169A /* Preview Content */,
@@ -85,6 +96,9 @@
 			dependencies = (
 			);
 			name = "Sign In";
+			packageProductDependencies = (
+				4AB200632992D5890064169A /* Vapor */,
+			);
 			productName = "Sign In";
 			productReference = 4AB200502992D37B0064169A /* Sign In.app */;
 			productType = "com.apple.product-type.application";
@@ -113,6 +127,9 @@
 				Base,
 			);
 			mainGroup = 4AB200472992D37B0064169A;
+			packageReferences = (
+				4AB200622992D5890064169A /* XCRemoteSwiftPackageReference "vapor" */,
+			);
 			productRefGroup = 4AB200512992D37B0064169A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -140,7 +157,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				4AB200562992D37B0064169A /* ContentView.swift in Sources */,
+				4AB200662992D5B80064169A /* Server.swift in Sources */,
+				4AB200682992D76F0064169A /* Person.swift in Sources */,
 				4AB200542992D37B0064169A /* Sign_InApp.swift in Sources */,
+				4AB2006A2992D7EE0064169A /* DataService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +295,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -302,6 +323,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -336,6 +358,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4AB200622992D5890064169A /* XCRemoteSwiftPackageReference "vapor" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vapor/vapor.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4AB200632992D5890064169A /* Vapor */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4AB200622992D5890064169A /* XCRemoteSwiftPackageReference "vapor" */;
+			productName = Vapor;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4AB200482992D37B0064169A /* Project object */;
 }
