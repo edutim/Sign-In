@@ -44,9 +44,9 @@ class Server: ObservableObject {
             
             let person = DataService.shared.findPersonWith(email: email)
             if person == nil {
-                return ReturnedPerson(firstName: "", lastName: "", email: "", role: "", reasonForVisit: "")
+                return ReturnedPerson(firstName: "", lastName: "", email: "", username: "", role: "", reasonForVisit: "")
             } else {
-                return ReturnedPerson(firstName: person?.firstName ?? "", lastName: person?.lastName ?? "", email: person?.email ?? "", role: person?.role ?? "", reasonForVisit: person?.reasonForVisit ?? "")
+                return ReturnedPerson(firstName: person?.firstName ?? "", lastName: person?.lastName ?? "", email: person?.email ?? "", username: person?.username ?? "", role: person?.role ?? "", reasonForVisit: person?.reasonForVisit ?? "")
             }
             
             
@@ -68,13 +68,54 @@ class Server: ObservableObject {
             
         }
         
-        app.post("newUser", ":email", ":firstName", ":lastName", ":role", ":reasonForVisit") { request async throws -> String in
+//        app.post("newUser", ":email", ":firstName", ":lastName", ":role", ":reasonForVisit") { request async throws -> String in
+//             print("New User")
+//            let person = Person(firstName: request.parameters.get("firstName") ?? "", lastName: request.parameters.get("lastName") ?? "", email: request.parameters.get("email") ?? "", role: request.parameters.get("role") ?? "", reasonForVisit: request.parameters.get("reasonForVisit") ?? "", date: Date(), type: "signIn")
+//
+//            DataService.shared.addPerson(person: person)
+//
+//            return "ok"
+//        }
+        
+        app.post("signIn", ":email", ":firstName", ":lastName", ":role", ":reasonForVisit", ":campus") { request async throws -> String in
              print("New User")
-            let person = Person(firstName: request.parameters.get("firstName") ?? "", lastName: request.parameters.get("lastName") ?? "", email: request.parameters.get("email") ?? "", role: request.parameters.get("role") ?? "", reasonForVisit: request.parameters.get("reasonForVisit") ?? "", date: Date())
+            let email = request.parameters.get("email") ?? ""
+            let split = email.split(separator: "@")
+            let username = String(split.first ?? "error")
+            
+            let person = Person(firstName: request.parameters.get("firstName") ?? "", lastName: request.parameters.get("lastName") ?? "", email: request.parameters.get("email") ?? "", username: username, role: request.parameters.get("role") ?? "", reasonForVisit: request.parameters.get("reasonForVisit") ?? "", campus: request.parameters.get("campus") ?? "", type: "signIn", date: Date())
             
             DataService.shared.addPerson(person: person)
             
             return "ok"
+        }
+        
+        app.get("signOut", ":email", ":firstName", ":lastName", ":role", ":reasonForVisit", ":campus") { request async throws -> String in
+             print("New User")
+            let person = Person(firstName: request.parameters.get("firstName") ?? "", lastName: request.parameters.get("lastName") ?? "", email: request.parameters.get("email") ?? "", username: request.parameters.get("username") ?? "", role: request.parameters.get("role") ?? "", reasonForVisit: request.parameters.get("reasonForVisit") ?? "", campus: request.parameters.get("campus") ?? "", type: "signOut", date: Date())
+            
+            DataService.shared.addPerson(person: person)
+            
+            let signOutDate = Date()
+            
+            let email = request.parameters.get("email") ?? ""
+            
+            let allPersonEntries = DataService.shared.people.filter({
+                $0.email == email
+            })
+            
+            let allLogIns = allPersonEntries.filter({
+                $0.type == "signIn"
+            })
+            
+            guard let lastSignInPerson = allLogIns.max(by: {
+                $0.date < $1.date }) else { return "sorry" }
+            
+            let elapsedTime = lastSignInPerson.date - signOutDate
+            
+            DataService.shared.sessions.append(Session(person: person, time: elapsedTime))
+            
+            return "\(elapsedTime)"
         }
         
     }

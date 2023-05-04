@@ -15,6 +15,8 @@
 		4AB200662992D5B80064169A /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB200652992D5B80064169A /* Server.swift */; };
 		4AB200682992D76F0064169A /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB200672992D76F0064169A /* Person.swift */; };
 		4AB2006A2992D7EE0064169A /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB200692992D7EE0064169A /* DataService.swift */; };
+		4AE869A92A0427A0004D7015 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE869A82A0427A0004D7015 /* Helpers.swift */; };
+		4AE869AF2A04519B004D7015 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE869AE2A04519B004D7015 /* Session.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +29,8 @@
 		4AB200652992D5B80064169A /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		4AB200672992D76F0064169A /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		4AB200692992D7EE0064169A /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
+		4AE869A82A0427A0004D7015 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+		4AE869AE2A04519B004D7015 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,8 +67,10 @@
 				4AB200532992D37B0064169A /* Sign_InApp.swift */,
 				4AB200552992D37B0064169A /* ContentView.swift */,
 				4AB200652992D5B80064169A /* Server.swift */,
+				4AE869A82A0427A0004D7015 /* Helpers.swift */,
 				4AB200672992D76F0064169A /* Person.swift */,
 				4AB200692992D7EE0064169A /* DataService.swift */,
+				4AE869AE2A04519B004D7015 /* Session.swift */,
 				4AB200572992D37D0064169A /* Assets.xcassets */,
 				4AB2005C2992D37D0064169A /* Sign_In.entitlements */,
 				4AB200592992D37D0064169A /* Preview Content */,
@@ -156,7 +162,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AE869AF2A04519B004D7015 /* Session.swift in Sources */,
 				4AB200562992D37B0064169A /* ContentView.swift in Sources */,
+				4AE869A92A0427A0004D7015 /* Helpers.swift in Sources */,
 				4AB200662992D5B80064169A /* Server.swift in Sources */,
 				4AB200682992D76F0064169A /* Person.swift in Sources */,
 				4AB200542992D37B0064169A /* Sign_InApp.swift in Sources */,

@@ -13,8 +13,11 @@ struct Person: Content {
     var firstName: String
     var lastName: String
     var email: String
+    var username: String
     var role: String
     var reasonForVisit: String
+    var campus: String
+    var type: String
     var date: Date
 }
 
@@ -22,6 +25,7 @@ struct ReturnedPerson: Content {
     var firstName: String
     var lastName: String
     var email: String
+    var username: String
     var role: String
     var reasonForVisit: String
 }

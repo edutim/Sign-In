@@ -98,12 +98,31 @@ struct ContentView: View {
                 Text("Export")
                 Divider()
                 Spacer()
-                Button("Export CSV") {
+                Button("Export Activity Log as CSV") {
                     var csv = DataService.shared.generateLogReportAsCSV()
                     let panel = NSSavePanel()
                     panel.allowedContentTypes = [.commaSeparatedText]
                     panel.isExtensionHidden = false
-                    panel.nameFieldStringValue = "export.csv"
+                    panel.nameFieldStringValue = "activityLog.csv"
+                    panel.begin { result in
+                        if result == .OK {
+                            guard let url = panel.url else { return }
+                            do {
+                                //write file
+                                let data = csv.data(using: .utf8)
+                                try data?.write(to: url)
+                            } catch {
+                                print(error.localizedDescription)
+                            }
+                        }
+                    }
+                }
+                Button("Export Session Log as CSV") {
+                    var csv = DataService.shared.generateSessionsReportAsCSV()
+                    let panel = NSSavePanel()
+                    panel.allowedContentTypes = [.commaSeparatedText]
+                    panel.isExtensionHidden = false
+                    panel.nameFieldStringValue = "sessionsLog.csv"
                     panel.begin { result in
                         if result == .OK {
                             guard let url = panel.url else { return }

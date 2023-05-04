@@ -16,6 +16,9 @@ class DataService : ObservableObject {
         }
     }
     
+    @Published var sessions = [Session]()
+    
+    
     init() {
         loadData()
     }
@@ -46,8 +49,11 @@ class DataService : ObservableObject {
     }
     
     func addPerson(person: Person) {
-        people.append(person)
-        saveData()
+        DispatchQueue.main.sync {
+            people.append(person)
+            saveData()
+        }
+        
     }
     
     func removeAll() {
@@ -56,13 +62,20 @@ class DataService : ObservableObject {
     }
     
     func findPersonWith(email: String) -> Person? {
-        let person = people.first(where: { $0.email == email })
+        var person = people.first(where: { $0.email == email })
+        
+        
+        if person == nil {  // search by username
+            let split = email.split(separator: "@")
+            let username = String(split.first ?? "error")
+            person = people.first(where: { $0.username == username })
+        }
         
         if person == nil {
             return nil
-        } else {
-            return person
         }
+        
+        return person
     }
     
     // CSV Stuff
@@ -74,9 +87,20 @@ class DataService : ObservableObject {
     }()
     
     func generateLogReportAsCSV() -> String {
-        var data = "firstName,lastName,email,role,reason,date,time\n"
+        var data = "firstName,lastName,email,role,reason,campus,type,date,time\n"
         for person in people {
-            let row = "\(person.firstName),\(person.lastName),\(person.email),\(person.role),\(person.reasonForVisit),\(person.date.formatted(date: .numeric, time: .omitted)),\(person.date.formatted(date: .omitted, time: .shortened))\n"
+            let row = "\(person.firstName),\(person.lastName),\(person.email),\(person.role),\(person.reasonForVisit),\(person.campus.replacingOccurrences(of: ",", with: "")),\(person.type),\(person.date.formatted(date: .numeric, time: .omitted)),\(person.date.formatted(date: .omitted, time: .shortened))\n"
+            data.append(row)
+        }
+        print(data)
+        return data
+    }
+    
+    func generateSessionsReportAsCSV() -> String {
+        var data = "firstName,lastName,email,role,reason,campus,date,sessionTimeInMinutes\n"
+        for session in sessions {
+            let person = session.person
+            let row = "\(person.firstName),\(person.lastName),\(person.email),\(person.role),\(person.reasonForVisit),\(person.campus.replacingOccurrences(of: ",", with: "")),\(person.date.formatted(date: .numeric, time: .omitted)),\(round(abs(session.time)) / 60)\n"
             data.append(row)
         }
         print(data)
