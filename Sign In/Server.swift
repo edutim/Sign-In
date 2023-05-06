@@ -53,14 +53,14 @@ class Server: ObservableObject {
         }
         
         app.get("allUsers") { request -> [Person] in
-            return DataService.shared.people
+            return DataService.shared.signIns
         }
         
         app.post("deleteAll", ":password") { request async throws -> String in
             
             let pass = request.parameters.get("password") ?? ""
             if pass == self.adminPassword {
-                DataService.shared.removeAll()
+                DataService.shared.deleteAllSignIns()
                 return "ok"
             } else {
                 return "Something went wrong"
@@ -85,7 +85,7 @@ class Server: ObservableObject {
             
             let person = Person(firstName: request.parameters.get("firstName") ?? "", lastName: request.parameters.get("lastName") ?? "", email: request.parameters.get("email") ?? "", username: username, role: request.parameters.get("role") ?? "", reasonForVisit: request.parameters.get("reasonForVisit") ?? "", campus: request.parameters.get("campus") ?? "", type: "signIn", date: Date())
             
-            DataService.shared.addPerson(person: person)
+            DataService.shared.signIn(person: person)
             
             return "ok"
         }
@@ -94,13 +94,11 @@ class Server: ObservableObject {
              print("New User")
             let person = Person(firstName: request.parameters.get("firstName") ?? "", lastName: request.parameters.get("lastName") ?? "", email: request.parameters.get("email") ?? "", username: request.parameters.get("username") ?? "", role: request.parameters.get("role") ?? "", reasonForVisit: request.parameters.get("reasonForVisit") ?? "", campus: request.parameters.get("campus") ?? "", type: "signOut", date: Date())
             
-            DataService.shared.addPerson(person: person)
-            
             let signOutDate = Date()
             
             let email = request.parameters.get("email") ?? ""
             
-            let allPersonEntries = DataService.shared.people.filter({
+            let allPersonEntries = DataService.shared.signIns.filter({
                 $0.email == email
             })
             
@@ -113,9 +111,17 @@ class Server: ObservableObject {
             
             let elapsedTime = lastSignInPerson.date - signOutDate
             
-            DataService.shared.sessions.append(Session(person: person, time: elapsedTime))
+            DataService.shared.signOut(person: person, elapsedTime: elapsedTime)
             
             return "\(elapsedTime)"
+            
+        }
+        
+        app.post("signOutAll") { request async throws in
+            //find all logged in users
+            
+            // loop them and sign them out
+            return "ok"
         }
         
     }

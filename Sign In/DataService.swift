@@ -10,12 +10,14 @@ import Foundation
 class DataService : ObservableObject {
     static var shared = DataService()
     
-    @Published var people = [Person]() {
+    
+    @Published var signIns = [Person]() {
         didSet {
             saveData()
         }
     }
     
+    // A session is one sign-in/sign-out cycle. A session is created and added to the sessions array when a user logs out.
     @Published var sessions = [Session]()
     
     
@@ -29,7 +31,7 @@ class DataService : ObservableObject {
         let ud = UserDefaults.standard
         if let data = ud.data(forKey: "people")  {
             if let decoded = try? JSONDecoder().decode([Person].self, from: data) {
-                people = decoded
+                signIns = decoded
                 return
             }
         }
@@ -40,7 +42,7 @@ class DataService : ObservableObject {
         
         var encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        if let encoded = try? encoder.encode(people) {
+        if let encoded = try? encoder.encode(signIns) {
             UserDefaults.standard.set(encoded, forKey: "people")
             print("Saved People")
         } else {
@@ -48,27 +50,46 @@ class DataService : ObservableObject {
         }
     }
     
-    func addPerson(person: Person) {
+    func signIn(person: Person) {
         DispatchQueue.main.sync {
-            people.append(person)
+            signIns.append(person)
             saveData()
         }
         
     }
     
-    func removeAll() {
-        people.removeAll()
+    func signOut(person: Person, elapsedTime: TimeInterval) {
+        // Create and add a session to the session array
+        let session = Session(person: person, time: elapsedTime)
+        sessions.append(session)
+        
+        // Search for and remove the user from sign in
+        DispatchQueue.main.async {
+            self.signIns.removeAll(where: { $0.email == person.email })
+        }
+    }
+    
+    func signOutAll() {
+        let localSignIns = signIns
+        for signIn in localSignIns {
+            let elapsedTime = signIn.date - Date()
+            signOut(person: signIn, elapsedTime: elapsedTime)
+        }
+    }
+    
+    func deleteAllSignIns() {
+        signIns.removeAll()
         saveData()
     }
     
     func findPersonWith(email: String) -> Person? {
-        var person = people.first(where: { $0.email == email })
+        var person = signIns.first(where: { $0.email == email })
         
         
         if person == nil {  // search by username
             let split = email.split(separator: "@")
             let username = String(split.first ?? "error")
-            person = people.first(where: { $0.username == username })
+            person = signIns.first(where: { $0.username == username })
         }
         
         if person == nil {
@@ -88,7 +109,7 @@ class DataService : ObservableObject {
     
     func generateLogReportAsCSV() -> String {
         var data = "firstName,lastName,email,role,reason,campus,type,date,time\n"
-        for person in people {
+        for person in signIns {
             let row = "\(person.firstName),\(person.lastName),\(person.email),\(person.role),\(person.reasonForVisit),\(person.campus.replacingOccurrences(of: ",", with: "")),\(person.type),\(person.date.formatted(date: .numeric, time: .omitted)),\(person.date.formatted(date: .omitted, time: .shortened))\n"
             data.append(row)
         }

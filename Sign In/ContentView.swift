@@ -15,6 +15,7 @@ struct ContentView: View {
     @EnvironmentObject var ds: DataService
     
     @State var showDeleteAlert = false
+    @State var showSignOutAllAlert = false
     
     @State private var showingExporter = false
     
@@ -53,10 +54,10 @@ struct ContentView: View {
             Divider()
                 .padding()
             VStack {
-                Text("Entries")
+                Text("Sign Ins")
                 Divider()
                 List {
-                    ForEach(ds.people, id:\.id ) { item in
+                    ForEach(ds.signIns, id:\.id ) { item in
                         VStack(alignment: .leading) {
                             HStack {
                                 Text(item.firstName)
@@ -79,15 +80,26 @@ struct ContentView: View {
                         }
                     }
                 }
-                
-                Button("Delete Users") {
-                    showDeleteAlert = true
-                }
-                .alert("Are you sureyou want to delete all the entries?", isPresented: $showDeleteAlert) {
-                    Button("Nope", role: .cancel, action: {})
-                    Button("Delete", role: .destructive, action: {
-                        DataService.shared.removeAll()
-                    })
+                HStack {
+                    Button("Delete Sign Ins") {
+                        showDeleteAlert = true
+                    }
+                    .alert("Are you sure you want to delete all the sign ins?", isPresented: $showDeleteAlert) {
+                        Button("Nope", role: .cancel, action: {})
+                        Button("Delete", role: .destructive, action: {
+                            DataService.shared.deleteAllSignIns()
+                        })
+                    }
+                    Button("Sign Out All") {
+                        showSignOutAllAlert = true
+                        DataService.shared.signOutAll()
+                    }
+                    .alert("Are you sure you want to sign out all the entries?", isPresented: $showDeleteAlert) {
+                        Button("Nope", role: .cancel, action: {})
+                        Button("Delete", role: .destructive, action: {
+                            DataService.shared.signOutAll()
+                        })
+                    }
                 }
                 Spacer()
             }
