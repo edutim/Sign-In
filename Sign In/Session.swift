@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct Session: Codable {
+struct Session: Codable, Identifiable {
+    var id = UUID()
     var person: Person
     var time: TimeInterval
 }

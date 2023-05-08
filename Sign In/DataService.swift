@@ -10,7 +10,7 @@ import Foundation
 class DataService : ObservableObject {
     static var shared = DataService()
     
-    
+    // Tracks who is currently signedIn
     @Published var signIns = [Person]() {
         didSet {
             saveData()
@@ -19,6 +19,9 @@ class DataService : ObservableObject {
     
     // A session is one sign-in/sign-out cycle. A session is created and added to the sessions array when a user logs out.
     @Published var sessions = [Session]()
+    
+    // The people array holds people to search for
+    var people = [Person]()
     
     
     init() {
@@ -51,22 +54,40 @@ class DataService : ObservableObject {
     }
     
     func signIn(person: Person) {
-        DispatchQueue.main.sync {
-            signIns.append(person)
-            saveData()
+        DispatchQueue.main.async {
+            self.signIns.append(person)
+            
+            if let foundPerson = self.findPersonWith(email: person.email) {
+                if let index = self.people.firstIndex(where: { $0.email == foundPerson.email }) {
+                    self.people[index] = person
+                    print("Updating Person")
+                }
+
+            } else {
+                self.people.append(person)
+                print("added person to people")
+            }
+            
+            self.saveData()
         }
         
     }
     
     func signOut(person: Person, elapsedTime: TimeInterval) {
         // Create and add a session to the session array
-        let session = Session(person: person, time: elapsedTime)
-        sessions.append(session)
+        DispatchQueue.main.async {
+            let session = Session(person: person, time: elapsedTime)
+            self.sessions.append(session)
+        }
+        
         
         // Search for and remove the user from sign in
-        DispatchQueue.main.async {
-            self.signIns.removeAll(where: { $0.email == person.email })
+        if let foundPerson = findPersonWith(email: person.email) {
+            DispatchQueue.main.async {
+                self.signIns.removeAll(where: { $0.email == person.email })
+            }
         }
+        
     }
     
     func signOutAll() {
@@ -82,14 +103,19 @@ class DataService : ObservableObject {
         saveData()
     }
     
+    func deleteAllSessions() {
+        sessions.removeAll()
+        saveData()
+    }
+    
     func findPersonWith(email: String) -> Person? {
-        var person = signIns.first(where: { $0.email == email })
+        var person = people.first(where: { $0.email == email })
         
         
         if person == nil {  // search by username
             let split = email.split(separator: "@")
             let username = String(split.first ?? "error")
-            person = signIns.first(where: { $0.username == username })
+            person = people.first(where: { $0.username == username })
         }
         
         if person == nil {
