@@ -33,7 +33,7 @@ class DataService : ObservableObject {
         decoder.dateDecodingStrategy = .iso8601
         let ud = UserDefaults.standard
         if let data = ud.data(forKey: "people")  {
-            if let decoded = try? JSONDecoder().decode([Person].self, from: data) {
+            if let decoded = try? decoder.decode([Person].self, from: data) {
                 signIns = decoded
                 return
             }
