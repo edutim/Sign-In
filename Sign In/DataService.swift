@@ -19,6 +19,8 @@ class DataService : ObservableObject {
     // The people array holds people to search for
     var people = [Person]()
     
+    
+    
     func debug() {
         
     }

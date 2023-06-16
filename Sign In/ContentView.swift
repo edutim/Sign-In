@@ -46,9 +46,9 @@ struct ContentView: View {
                 Divider()
                 Text("The server should be available at the ip address of the computer on port 8181. Example: http://172.1.1.1:8181")
                 Text("You can test the server status at http://ipaddess:8181/test")
-                Button("Debug") {
-                    DataService.shared.debug()
-                }
+//                Button("Debug") {
+//                    DataService.shared.debug()
+//                }
                 Spacer()
             }
             .frame(width: 200)
