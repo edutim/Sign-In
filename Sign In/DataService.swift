@@ -11,11 +11,7 @@ class DataService : ObservableObject {
     static var shared = DataService()
     
     // Tracks who is currently signedIn
-    @Published var signIns = [Person]() {
-        didSet {
-            saveData()
-        }
-    }
+    @Published var signIns = [Person]()
     
     // A session is one sign-in/sign-out cycle. A session is created and added to the sessions array when a user logs out.
     @Published var sessions = [Session]()
@@ -23,6 +19,9 @@ class DataService : ObservableObject {
     // The people array holds people to search for
     var people = [Person]()
     
+    func debug() {
+        
+    }
     
     init() {
         loadData()
@@ -32,12 +31,36 @@ class DataService : ObservableObject {
         var decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let ud = UserDefaults.standard
-        if let data = ud.data(forKey: "people")  {
+        
+        // Sign Ins
+        
+        if let data = ud.data(forKey: "signIns")  {
             if let decoded = try? decoder.decode([Person].self, from: data) {
                 signIns = decoded
-                return
+               
             }
         }
+        
+        // Sessions
+        if let data = ud.data(forKey: "sessions")  {
+            if let decoded = try? decoder.decode([Session].self, from: data) {
+                sessions = decoded
+                
+            }
+        }
+        
+        
+        // Past peeople
+        if let data = ud.data(forKey: "people")  {
+            do {
+                let decoded = try decoder.decode([Person].self, from: data)
+                people = decoded
+            } catch {
+                print(error.localizedDescription)
+            }
+            
+        }
+        
         
     }
     
@@ -46,6 +69,22 @@ class DataService : ObservableObject {
         var encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         if let encoded = try? encoder.encode(signIns) {
+            UserDefaults.standard.set(encoded, forKey: "signIns")
+            print("Saved Sign Ins")
+        } else {
+            print("Soemthing went wrong")
+        }
+        
+      
+        if let encoded = try? encoder.encode(sessions) {
+            UserDefaults.standard.set(encoded, forKey: "sessions")
+            print("Saved Sessions")
+        } else {
+            print("Soemthing went wrong")
+        }
+        
+    
+        if let encoded = try? encoder.encode(people) {
             UserDefaults.standard.set(encoded, forKey: "people")
             print("Saved People")
         } else {
@@ -87,7 +126,7 @@ class DataService : ObservableObject {
                 self.signIns.removeAll(where: { $0.email == person.email })
             }
         }
-        
+        saveData()
     }
     
     func signOutAll() {
@@ -96,6 +135,7 @@ class DataService : ObservableObject {
             let elapsedTime = signIn.date - Date()
             signOut(person: signIn, elapsedTime: elapsedTime)
         }
+        saveData()
     }
     
     func deleteAllSignIns() {
@@ -110,7 +150,6 @@ class DataService : ObservableObject {
     
     func findPersonWith(email: String) -> Person? {
         var person = people.first(where: { $0.email == email })
-        
         
         if person == nil {  // search by username
             let split = email.split(separator: "@")
