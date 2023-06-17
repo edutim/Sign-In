@@ -17,6 +17,8 @@ class DataService : ObservableObject {
     
     // A session is one sign-in/sign-out cycle. A session is created and added to the sessions array when a user logs out.
     @Published var sessions = [Session]()
+    @Published var filteredSessions = [Session]()
+    var sessionFilters = [String]()
     
     // The people array holds people to search for
     var people = [Person]()
@@ -66,7 +68,7 @@ class DataService : ObservableObject {
         }
         
         applySignInFilters()
-        
+        applySessionsFilters()
     }
     
     func saveData() {
@@ -97,6 +99,7 @@ class DataService : ObservableObject {
         }
         
         applySignInFilters()
+        applySessionsFilters()
     }
     
     func signIn(person: Person) {
@@ -181,6 +184,8 @@ class DataService : ObservableObject {
         return person
     }
     
+    
+    // Sign In Filtering
     func addSignInFilter(location: String) {
         signInFilters.append(location)
         applySignInFilters()
@@ -212,6 +217,43 @@ class DataService : ObservableObject {
         
         DispatchQueue.main.async {
             self.filteredSignIns = filtered
+        }
+        
+        
+    }
+    
+    // Session Filtering
+    func addSessionsFilter(location: String) {
+        sessionFilters.append(location)
+        applySessionsFilters()
+    }
+    
+    func removeSessionsFilter(location: String) {
+        sessionFilters.removeAll(where: {$0 == location})
+        applySessionsFilters()
+    }
+    
+    func removeAllSessionsFilters() {
+        sessionFilters.removeAll()
+        applySessionsFilters()
+    }
+    
+    func applySessionsFilters() {
+        // Leave the filter funtion if there are no filters.
+        if sessionFilters.isEmpty {
+            DispatchQueue.main.async {
+                self.filteredSessions = self.sessions
+            }
+            
+            return
+        }
+        // Create a copy of the people array
+        let sessionArray = sessions
+        
+        let filtered = sessionArray.filter({sessionFilters.contains($0.person.campus)})
+        
+        DispatchQueue.main.async {
+            self.filteredSessions = filtered
         }
         
         

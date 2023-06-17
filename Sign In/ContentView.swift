@@ -23,12 +23,20 @@ struct ContentView: View {
     @State private var address = ""
     
     @State private var showSignedInFilter = false
-    @State private var allFilter = true
-    @State private var allendaleFilter = false
-    @State private var lancasterFilter = false
-    @State private var sumterFilter = false
-    @State private var walterboroFilter = false
-    @State private var unionFilter = false
+    @State private var allSignInFilter = true
+    @State private var allendaleSignInFilter = false
+    @State private var lancasterSignInFilter = false
+    @State private var sumterSignInFilter = false
+    @State private var walterboroSignInFilter = false
+    @State private var unionSignInFilter = false
+    
+    @State private var showSessionsFilter = false
+    @State private var allSessionsFilter = true
+    @State private var allendaleSessionsFilter = false
+    @State private var lancasterSessionsFilter = false
+    @State private var sumterSessionsFilter = false
+    @State private var walterboroSessionsFilter = false
+    @State private var unionSessionsFilter = false
     
     let dateFormatter: DateFormatter = {
           let formatter = DateFormatter()
@@ -78,61 +86,61 @@ struct ContentView: View {
                     }
                     .popover(isPresented:$showSignedInFilter) {
                         VStack {
-                            Toggle("Show All", isOn: $allFilter)
+                            Toggle("Show All", isOn: $allSignInFilter)
                                 .toggleStyle(.button)
-                                .onChange(of: allFilter) { value in
+                                .onChange(of: allSignInFilter) { value in
                                     if value {
                                         DataService.shared.removeAllSignInFilters()
-                                        resetFilters()
+                                        resetSignInsFilters()
                                     } else {
                                         DataService.shared.removeSignInFilter(location: "Allendale")
                                     }
                                 }
-                            Toggle("Allendale", isOn: $allendaleFilter)
+                            Toggle("Allendale", isOn: $allendaleSignInFilter)
                                 .toggleStyle(.button)
-                                .onChange(of: allendaleFilter) { value in
+                                .onChange(of: allendaleSignInFilter) { value in
                                     if value {
-                                        allFilter = false
+                                        allSignInFilter = false
                                         DataService.shared.addSignInFilter(location: "Allendale")
                                     } else {
                                         DataService.shared.removeSignInFilter(location: "Allendale")
                                     }
                                 }
-                            Toggle("Lancaster", isOn: $lancasterFilter)
+                            Toggle("Lancaster", isOn: $lancasterSignInFilter)
                                 .toggleStyle(.button)
-                                .onChange(of: lancasterFilter) { value in
+                                .onChange(of: lancasterSignInFilter) { value in
                                     if value {
-                                        allFilter = false
+                                        allSignInFilter = false
                                         DataService.shared.addSignInFilter(location: "Lancaster")
                                     } else {
                                         DataService.shared.removeSignInFilter(location: "Lancaster")
                                     }
                                 }
-                            Toggle("Sumter", isOn: $sumterFilter)
+                            Toggle("Sumter", isOn: $sumterSignInFilter)
                                 .toggleStyle(.button)
-                                .onChange(of: sumterFilter) { value in
+                                .onChange(of: sumterSignInFilter) { value in
                                     if value {
-                                        allFilter = false
+                                        allSignInFilter = false
                                         DataService.shared.addSignInFilter(location: "Sumter")
                                     } else {
                                         DataService.shared.removeSignInFilter(location: "Sumter")
                                     }
                                 }
-                            Toggle("Walterboro", isOn: $walterboroFilter)
+                            Toggle("Walterboro", isOn: $walterboroSignInFilter)
                                 .toggleStyle(.button)
-                                .onChange(of: walterboroFilter) { value in
+                                .onChange(of: walterboroSignInFilter) { value in
                                     if value {
-                                        allFilter = false
+                                        allSignInFilter = false
                                         DataService.shared.addSignInFilter(location: "Walterboro")
                                     } else {
                                         DataService.shared.removeSignInFilter(location: "Walterboro")
                                     }
                                 }
-                            Toggle("Union", isOn: $unionFilter)
+                            Toggle("Union", isOn: $unionSignInFilter)
                                 .toggleStyle(.button)
-                                .onChange(of: unionFilter) { value in
+                                .onChange(of: unionSignInFilter) { value in
                                     if value {
-                                        allFilter = false
+                                        allSignInFilter = false
                                         DataService.shared.addSignInFilter(location: "Union")
                                     } else {
                                         DataService.shared.removeSignInFilter(location: "Union")
@@ -195,10 +203,85 @@ struct ContentView: View {
             }
             .frame(width: 200)
             VStack {
-                Text("Log")
+                HStack {
+                    Text("Session Log")
+                    Spacer()
+                    Button {
+                        showSessionsFilter = true
+                    } label: {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                    }
+                    .popover(isPresented:$showSessionsFilter) {
+                        VStack {
+                            Toggle("Show All", isOn: $allSessionsFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: allSessionsFilter) { value in
+                                    if value {
+                                        DataService.shared.removeAllSessionsFilters()
+                                        resetSessionsFilters()
+                                    } else {
+                                        DataService.shared.removeSessionsFilter(location: "Allendale")
+                                    }
+                                }
+                            Toggle("Allendale", isOn: $allendaleSessionsFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: allendaleSessionsFilter) { value in
+                                    if value {
+                                        allSessionsFilter = false
+                                        DataService.shared.addSessionsFilter(location: "Allendale")
+                                    } else {
+                                        DataService.shared.removeSessionsFilter(location: "Allendale")
+                                    }
+                                }
+                            Toggle("Lancaster", isOn: $lancasterSessionsFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: lancasterSessionsFilter) { value in
+                                    if value {
+                                        allSessionsFilter = false
+                                        DataService.shared.addSessionsFilter(location: "Lancaster")
+                                    } else {
+                                        DataService.shared.removeSessionsFilter(location: "Lancaster")
+                                    }
+                                }
+                            Toggle("Sumter", isOn: $sumterSessionsFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: sumterSessionsFilter) { value in
+                                    if value {
+                                        allSessionsFilter = false
+                                        DataService.shared.addSessionsFilter(location: "Sumter")
+                                    } else {
+                                        DataService.shared.removeSessionsFilter(location: "Sumter")
+                                    }
+                                }
+                            Toggle("Walterboro", isOn: $walterboroSessionsFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: walterboroSessionsFilter) { value in
+                                    if value {
+                                        allSessionsFilter = false
+                                        DataService.shared.addSessionsFilter(location: "Walterboro")
+                                    } else {
+                                        DataService.shared.removeSessionsFilter(location: "Walterboro")
+                                    }
+                                }
+                            Toggle("Union", isOn: $unionSessionsFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: unionSessionsFilter) { value in
+                                    if value {
+                                        allSessionsFilter = false
+                                        DataService.shared.addSessionsFilter(location: "Union")
+                                    } else {
+                                        DataService.shared.removeSessionsFilter(location: "Union")
+                                    }
+                                }
+                           
+                        }
+                        .padding()
+                    }
+                }
+
                 Divider()
                 List {
-                    ForEach(ds.sessions, id:\.id ) { session in
+                    ForEach(ds.filteredSessions, id:\.id ) { session in
                         VStack(alignment: .leading) {
                             HStack {
                                 Text(session.person.firstName)
@@ -269,13 +352,22 @@ struct ContentView: View {
         }
     }
     
-    func resetFilters() {
-        allFilter = true
-        allendaleFilter = false
-        lancasterFilter = false
-        sumterFilter = false
-        walterboroFilter = false
-        unionFilter = false
+    func resetSignInsFilters() {
+        allSignInFilter = true
+        allendaleSignInFilter = false
+        lancasterSignInFilter = false
+        sumterSignInFilter = false
+        walterboroSignInFilter = false
+        unionSignInFilter = false
+    }
+    
+    func resetSessionsFilters() {
+        allSessionsFilter = true
+        allendaleSessionsFilter = false
+        lancasterSessionsFilter = false
+        sumterSessionsFilter = false
+        walterboroSessionsFilter = false
+        unionSessionsFilter = false
     }
     
     func formattedElapsedTime(time: TimeInterval) -> String {
