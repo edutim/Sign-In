@@ -13,6 +13,7 @@ class DataService : ObservableObject {
     // Tracks who is currently signedIn
     @Published var signIns = [Person]()
     @Published var filteredSignIns = [Person]()
+    var filters = [String]()
     
     // A session is one sign-in/sign-out cycle. A session is created and added to the sessions array when a user logs out.
     @Published var sessions = [Session]()
@@ -64,6 +65,7 @@ class DataService : ObservableObject {
             
         }
         
+        applySignInFilters()
         
     }
     
@@ -93,6 +95,8 @@ class DataService : ObservableObject {
         } else {
             print("Soemthing went wrong")
         }
+        
+        applySignInFilters()
     }
     
     func signIn(person: Person) {
@@ -160,6 +164,7 @@ class DataService : ObservableObject {
         }
     }
     
+    
     func findPersonWith(email: String) -> Person? {
         var person = people.first(where: { $0.email == email })
         
@@ -174,6 +179,42 @@ class DataService : ObservableObject {
         }
         
         return person
+    }
+    
+    func addSignInFilter(location: String) {
+        filters.append(location)
+        applySignInFilters()
+    }
+    
+    func removeSignInFilter(location: String) {
+        filters.removeAll(where: {$0 == location})
+        applySignInFilters()
+    }
+    
+    func removeAllSignInFilters() {
+        filters.removeAll()
+        applySignInFilters()
+    }
+    
+    func applySignInFilters() {
+        // Leave the filter funtion if there are no filters.
+        if filters.isEmpty {
+            DispatchQueue.main.async {
+                self.filteredSignIns = self.signIns
+            }
+            
+            return
+        }
+        // Create a copy of the people array
+        let peopleArray = signIns
+        
+        let filtered = peopleArray.filter({filters.contains($0.campus)})
+        
+        DispatchQueue.main.async {
+            self.filteredSignIns = filtered
+        }
+        
+        
     }
     
     // CSV Stuff

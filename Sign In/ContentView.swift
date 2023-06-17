@@ -23,6 +23,12 @@ struct ContentView: View {
     @State private var address = ""
     
     @State private var showSignedInFilter = false
+    @State private var allFilter = true
+    @State private var allendaleFilter = false
+    @State private var lancasterFilter = false
+    @State private var sumterFilter = false
+    @State private var walterboroFilter = false
+    @State private var unionFilter = false
     
     let dateFormatter: DateFormatter = {
           let formatter = DateFormatter()
@@ -71,14 +77,75 @@ struct ContentView: View {
                         Image(systemName: "line.3.horizontal.decrease.circle")
                     }
                     .popover(isPresented:$showSignedInFilter) {
-                        Text("Your content here")
-                            .font(.headline)
-                            .padding()
+                        VStack {
+                            Toggle("Show All", isOn: $allFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: allFilter) { value in
+                                    if value {
+                                        DataService.shared.removeAllSignInFilters()
+                                        resetFilters()
+                                    } else {
+                                        DataService.shared.removeSignInFilter(location: "Allendale")
+                                    }
+                                }
+                            Toggle("Allendale", isOn: $allendaleFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: allendaleFilter) { value in
+                                    if value {
+                                        allFilter = false
+                                        DataService.shared.addSignInFilter(location: "Allendale")
+                                    } else {
+                                        DataService.shared.removeSignInFilter(location: "Allendale")
+                                    }
+                                }
+                            Toggle("Lancaster", isOn: $lancasterFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: lancasterFilter) { value in
+                                    if value {
+                                        allFilter = false
+                                        DataService.shared.addSignInFilter(location: "Lancaster")
+                                    } else {
+                                        DataService.shared.removeSignInFilter(location: "Lancaster")
+                                    }
+                                }
+                            Toggle("Sumter", isOn: $sumterFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: sumterFilter) { value in
+                                    if value {
+                                        allFilter = false
+                                        DataService.shared.addSignInFilter(location: "Sumter")
+                                    } else {
+                                        DataService.shared.removeSignInFilter(location: "Sumter")
+                                    }
+                                }
+                            Toggle("Walterboro", isOn: $walterboroFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: walterboroFilter) { value in
+                                    if value {
+                                        allFilter = false
+                                        DataService.shared.addSignInFilter(location: "Walterboro")
+                                    } else {
+                                        DataService.shared.removeSignInFilter(location: "Walterboro")
+                                    }
+                                }
+                            Toggle("Union", isOn: $unionFilter)
+                                .toggleStyle(.button)
+                                .onChange(of: unionFilter) { value in
+                                    if value {
+                                        allFilter = false
+                                        DataService.shared.addSignInFilter(location: "Union")
+                                    } else {
+                                        DataService.shared.removeSignInFilter(location: "Union")
+                                    }
+                                }
+                           
+                        }
+                        .padding()
                     }
                 }
                 Divider()
                 List {
-                    ForEach(ds.signIns, id:\.id ) { item in
+                    ForEach(ds.filteredSignIns, id:\.id ) { item in
                         VStack(alignment: .leading) {
                             HStack {
                                 Text(item.firstName)
@@ -119,7 +186,7 @@ struct ContentView: View {
                     }
                     .alert("Are you sure you want to sign out all the entries?", isPresented: $showSignOutAllAlert) {
                         Button("Nope", role: .cancel, action: {})
-                        Button("Delete", role: .destructive, action: {
+                        Button("Sign Out", role: .destructive, action: {
                             DataService.shared.signOutAll()
                         })
                     }
@@ -200,6 +267,15 @@ struct ContentView: View {
         .task {
             setServerAddress()
         }
+    }
+    
+    func resetFilters() {
+        allFilter = true
+        allendaleFilter = false
+        lancasterFilter = false
+        sumterFilter = false
+        walterboroFilter = false
+        unionFilter = false
     }
     
     func formattedElapsedTime(time: TimeInterval) -> String {
