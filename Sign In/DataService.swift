@@ -13,7 +13,7 @@ class DataService : ObservableObject {
     // Tracks who is currently signedIn
     @Published var signIns = [Person]()
     @Published var filteredSignIns = [Person]()
-    var filters = [String]()
+    var signInFilters = [String]()
     
     // A session is one sign-in/sign-out cycle. A session is created and added to the sessions array when a user logs out.
     @Published var sessions = [Session]()
@@ -182,23 +182,23 @@ class DataService : ObservableObject {
     }
     
     func addSignInFilter(location: String) {
-        filters.append(location)
+        signInFilters.append(location)
         applySignInFilters()
     }
     
     func removeSignInFilter(location: String) {
-        filters.removeAll(where: {$0 == location})
+        signInFilters.removeAll(where: {$0 == location})
         applySignInFilters()
     }
     
     func removeAllSignInFilters() {
-        filters.removeAll()
+        signInFilters.removeAll()
         applySignInFilters()
     }
     
     func applySignInFilters() {
         // Leave the filter funtion if there are no filters.
-        if filters.isEmpty {
+        if signInFilters.isEmpty {
             DispatchQueue.main.async {
                 self.filteredSignIns = self.signIns
             }
@@ -208,7 +208,7 @@ class DataService : ObservableObject {
         // Create a copy of the people array
         let peopleArray = signIns
         
-        let filtered = peopleArray.filter({filters.contains($0.campus)})
+        let filtered = peopleArray.filter({signInFilters.contains($0.campus)})
         
         DispatchQueue.main.async {
             self.filteredSignIns = filtered
