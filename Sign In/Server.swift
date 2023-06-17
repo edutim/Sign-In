@@ -77,6 +77,33 @@ class Server: ObservableObject {
 //            return "ok"
 //        }
         
+        app.get("isUserSignedIn", ":email") { request async throws -> String in
+            
+            let email = request.parameters.get("email") ?? ""
+            let status = DataService.shared.isUserLoggedIn(email: email)
+            if status {
+                return "true"
+            } else {
+                return "false"
+            }
+        }
+        
+        app.get("allSignedInForLocation", ":location") { request -> [ReturnedPerson] in
+            let location = request.parameters.get("location") ?? ""
+            let signInsFromLocation = DataService.shared.signIns.filter({ $0.campus == location })
+//            let encoder = JSONEncoder()
+//            encoder.dateEncodingStrategy = .iso8601
+//            let encodedPeople = try? encoder.encode(signInsFromLocation)
+//            let string = String(data: encodedPeople!, encoding: .utf8)
+            var personsToReturn = [ReturnedPerson]()
+            for person in signInsFromLocation {
+                let newPerson = ReturnedPerson(firstName: person.firstName, lastName: person.lastName, email: person.email, username: person.username, role: person.role, reasonForVisit: person.reasonForVisit)
+                personsToReturn.append(newPerson)
+            }
+            return personsToReturn
+        }
+        
+        
         app.post("signIn", ":email", ":firstName", ":lastName", ":role", ":reasonForVisit", ":campus") { request async throws -> String in
              print("New User")
             let email = request.parameters.get("email") ?? ""

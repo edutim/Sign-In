@@ -20,6 +20,10 @@ struct ContentView: View {
     
     @State private var showingExporter = false
     
+    @State private var address = ""
+    
+    @State private var showSignedInFilter = false
+    
     let dateFormatter: DateFormatter = {
           let formatter = DateFormatter()
           formatter.dateStyle = .long
@@ -33,9 +37,10 @@ struct ContentView: View {
                 Text("Server")
                 Divider()
                 Toggle(isOn: $serverStatus) {
-                    Label("Server", image: "person")
+                    Label("Status", image: "person")
                 }
                 .toggleStyle(.switch)
+                .padding()
                 .onChange(of: serverStatus) { status in
                     if serverStatus {
                         server.start()
@@ -44,8 +49,10 @@ struct ContentView: View {
                     }
                 }
                 Divider()
-                Text("The server should be available at the ip address of the computer on port 8181. Example: http://172.1.1.1:8181")
-                Text("You can test the server status at http://ipaddess:8181/test")
+                Text("Available at: http://\(address)")
+                    .padding(.bottom)
+                Text("You can test the server status at http://\(address)/test")
+                
 //                Button("Debug") {
 //                    DataService.shared.debug()
 //                }
@@ -55,7 +62,20 @@ struct ContentView: View {
             Divider()
                 .padding()
             VStack {
-                Text("Signed In")
+                HStack {
+                    Text("Signed In")
+                    Spacer()
+                    Button {
+                        showSignedInFilter = true
+                    } label: {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                    }
+                    .popover(isPresented:$showSignedInFilter) {
+                        Text("Your content here")
+                            .font(.headline)
+                            .padding()
+                    }
+                }
                 Divider()
                 List {
                     ForEach(ds.signIns, id:\.id ) { item in
@@ -71,6 +91,9 @@ struct ContentView: View {
                                 .font(.caption)
                                 .tint(.secondary)
                             Text("Reason: \(item.reasonForVisit)")
+                                .font(.caption)
+                                .tint(.secondary)
+                            Text("Location: \(item.campus)")
                                 .font(.caption)
                                 .tint(.secondary)
                             Text("Time: \(item.date, formatter: dateFormatter)")
@@ -123,6 +146,9 @@ struct ContentView: View {
                             Text("Reason: \(session.person.reasonForVisit)")
                                 .font(.caption)
                                 .tint(.secondary)
+                            Text("Location: \(session.person.campus)")
+                                .font(.caption)
+                                .tint(.secondary)
                             Text("Time: \(formattedElapsedTime(time: session.time))")
                                 .font(.caption)
                                 .tint(.secondary)
@@ -142,66 +168,38 @@ struct ContentView: View {
                             DataService.shared.deleteAllSessions()
                         })
                     }
-                    
-                }
-                Spacer()
-            }
-            .frame(width: 200)
-            Divider()
-                .padding()
-            VStack {
-                Text("Export")
-                Divider()
-                Spacer()
-//                Button("Export Activity Log as CSV") {
-//                    var csv = DataService.shared.generateLogReportAsCSV()
-//                    let panel = NSSavePanel()
-//                    panel.allowedContentTypes = [.commaSeparatedText]
-//                    panel.isExtensionHidden = false
-//                    panel.nameFieldStringValue = "activityLog.csv"
-//                    panel.begin { result in
-//                        if result == .OK {
-//                            guard let url = panel.url else { return }
-//                            do {
-//                                //write file
-//                                let data = csv.data(using: .utf8)
-//                                try data?.write(to: url)
-//                            } catch {
-//                                print(error.localizedDescription)
-//                            }
-//                        }
-//                    }
-//                }
-                Button("Export Session Log as CSV") {
-                    var csv = DataService.shared.generateSessionsReportAsCSV()
-                    let panel = NSSavePanel()
-                    panel.allowedContentTypes = [.commaSeparatedText]
-                    panel.isExtensionHidden = false
-                    panel.nameFieldStringValue = "sessionsLog.csv"
-                    panel.begin { result in
-                        if result == .OK {
-                            guard let url = panel.url else { return }
-                            do {
-                                //write file
-                                let data = csv.data(using: .utf8)
-                                try data?.write(to: url)
-                            } catch {
-                                print(error.localizedDescription)
+                    Button("Export Session Log as CSV") {
+                        var csv = DataService.shared.generateSessionsReportAsCSV()
+                        let panel = NSSavePanel()
+                        panel.allowedContentTypes = [.commaSeparatedText]
+                        panel.isExtensionHidden = false
+                        panel.nameFieldStringValue = "sessionsLog.csv"
+                        panel.begin { result in
+                            if result == .OK {
+                                guard let url = panel.url else { return }
+                                do {
+                                    //write file
+                                    let data = csv.data(using: .utf8)
+                                    try data?.write(to: url)
+                                } catch {
+                                    print(error.localizedDescription)
+                                }
                             }
                         }
                     }
-                }
-                //.buttonStyle(.borderedProminent)
-                
-                
-                Spacer()
                     
+                }
+                Spacer()
             }
             .frame(width: 200)
+            
                 
             
         }
         .padding()
+        .task {
+            setServerAddress()
+        }
     }
     
     func formattedElapsedTime(time: TimeInterval) -> String {
@@ -218,6 +216,12 @@ struct ContentView: View {
             return "error"
         }
         
+    }
+    
+    func setServerAddress() {
+        var hostname = Host.current().localizedName
+        hostname?.append(contentsOf: ":8181")
+        address = hostname?.replacingOccurrences(of: " ", with: "-") ?? "unknown"
     }
 }
 

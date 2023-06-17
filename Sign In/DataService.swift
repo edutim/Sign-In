@@ -12,6 +12,7 @@ class DataService : ObservableObject {
     
     // Tracks who is currently signedIn
     @Published var signIns = [Person]()
+    @Published var filteredSignIns = [Person]()
     
     // A session is one sign-in/sign-out cycle. A session is created and added to the sessions array when a user logs out.
     @Published var sessions = [Session]()
@@ -148,6 +149,15 @@ class DataService : ObservableObject {
     func deleteAllSessions() {
         sessions.removeAll()
         saveData()
+    }
+    
+    func isUserLoggedIn(email: String) -> Bool {
+        var person = signIns.first(where: { $0.email == email })
+        if person == nil {
+            return false
+        } else {
+            return true
+        }
     }
     
     func findPersonWith(email: String) -> Person? {
