@@ -14,6 +14,7 @@ class DataService : ObservableObject {
     @Published var signIns = [Person]()
     @Published var filteredSignIns = [Person]()
     var signInFilters = [String]()
+
     
     // A session is one sign-in/sign-out cycle. A session is created and added to the sessions array when a user logs out.
     @Published var sessions = [Session]()

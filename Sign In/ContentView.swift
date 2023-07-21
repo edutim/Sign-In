@@ -152,6 +152,7 @@ struct ContentView: View {
                     }
                 }
                 Divider()
+            
                 List {
                     ForEach(ds.filteredSignIns, id:\.id ) { item in
                         VStack(alignment: .leading) {
@@ -178,8 +179,36 @@ struct ContentView: View {
                             
                         }
                     }
+                    .onDelete { offsets in
+                        if let person = offsets.map { ds.signIns[$0] }.first {
+                            let signOutDate = Date()
+                            
+                            let email = person.email
+                            
+                            let allPersonEntries = DataService.shared.signIns.filter({
+                                $0.email == email
+                            })
+                            
+                            let allLogIns = allPersonEntries.filter({
+                                $0.type == "signIn"
+                            })
+                            
+                            if let lastSignInPerson = allLogIns.max(by: {
+                                $0.date < $1.date }) {
+                                
+                                
+                                let elapsedTime = lastSignInPerson.date - signOutDate
+                                
+                                
+                                ds.signOut(person: person, elapsedTime: elapsedTime)
+                            }
+                        }
+                        
+                    }
                 }
+                
                 VStack {
+                    Text("#: \(ds.filteredSignIns.count)")
                     Button("Delete All") {
                         showDeleteAlert = true
                     }
